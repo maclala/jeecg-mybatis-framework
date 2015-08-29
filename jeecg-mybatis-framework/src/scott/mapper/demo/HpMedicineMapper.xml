@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="scott.dao.demo.HpMedicineDao" > 
+<!-- Result Map-->
+<resultMap id="BaseResultMap" type="scott.entity.demo.HpMedicine" >
+	<result column="id" property="id"/>
+	<result column="name_seo" property="name_seo"/>
+	<result column="unit" property="unit"/>
+	<result column="engname" property="engname"/>
+	<result column="sys_subtime" property="sys_subtime"/>
+</resultMap>
+       
+<!-- hp_medicine table all fields -->
+<sql id="Base_Column_List" >
+	 id,name_seo,unit,engname,sys_subtime
+</sql>
+   
+   
+<!-- 查询条件 -->
+<sql id="Example_Where_Clause">
+where 1=1
+<trim  suffixOverrides="," >
+	<if test="id != null and id != ''" >
+	    and id =  #{id}
+	</if>
+	<if test="name_seo != null and name_seo != ''" >
+	    and name_seo =  #{name_seo}
+	</if>
+	<if test="unit != null and unit != ''" >
+	    and unit =  #{unit}
+	</if>
+	<if test="engname != null and engname != ''" >
+	    and engname =  #{engname}
+	</if>
+	<if test="sys_subtime != null and sys_subtime != ''" >
+	    and sys_subtime =  #{sys_subtime}
+	</if>
+</trim>
+</sql>
+   
+
+<!-- 插入记录 -->
+<insert id="add" parameterType="Object" >
+<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+	SELECT LAST_INSERT_ID()
+  </selectKey>
+  insert into hp_medicine(id,name_seo,unit,engname,sys_subtime)
+ values(#{id},#{name_seo},#{unit},#{engname},#{sys_subtime})
+</insert>
+
+<!-- 根据id，修改记录-->  
+ <update id="update" parameterType="Object" >
+  update hp_medicine set name_seo=#{name_seo},unit=#{unit},engname=#{engname},sys_subtime=#{sys_subtime} where id=#{id}
+ </update>
+ 
+ <!-- 修改记录，只修改只不为空的字段 -->
+<update id="updateBySelective" parameterType="Object" >
+	update hp_medicine set 
+	<trim  suffixOverrides="," >
+	<if test="name_seo != null  ">
+		name_seo=#{name_seo},
+	</if>
+	<if test="unit != null  ">
+		unit=#{unit},
+	</if>
+	<if test="engname != null  ">
+		engname=#{engname},
+	</if>
+	<if test="sys_subtime != null  ">
+		sys_subtime=#{sys_subtime},
+	</if>
+	</trim> where id=#{id}
+</update>
+
+<!-- 删除记录 -->
+<delete id="delete" parameterType="Object">
+	delete 	 from hp_medicine where id = #{id}
+</delete>
+ 
+<!-- 根据id查询 药品 -->
+<select id="queryById"  resultMap="BaseResultMap" parameterType="Object">
+	select <include refid="Base_Column_List" /> 
+	 from hp_medicine where id = #{id}
+</select>
+
+<!-- 药品 列表总数-->
+<select id="queryByCount" resultType="java.lang.Integer"  parameterType="Object">
+	select count(1) from hp_medicine 
+	<include refid="Example_Where_Clause"/>
+</select>
+  	
+<!-- 查询药品列表 -->
+<select id="queryByList" resultMap="BaseResultMap"  parameterType="Object">
+	select 
+	<include refid="Base_Column_List"/>
+	from hp_medicine 
+	<include refid="Example_Where_Clause"/>
+	<if test="pager.orderCondition != null and pager.orderCondition != ''" >
+      ${pager.orderCondition}
+    </if>
+    <if test="pager.mysqlQueryCondition != null and pager.mysqlQueryCondition != ''" >
+       ${pager.mysqlQueryCondition}
+    </if>
+</select>
+  	
+</mapper>   
